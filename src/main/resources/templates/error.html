@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error — Hostel Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-card fade-in" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+            <h1 th:text="${errorTitle != null ? errorTitle : 'Error'}" style="margin-bottom: 1rem;"></h1>
+            <p th:text="${errorMessage != null ? errorMessage : 'An unexpected error occurred.'}"
+               style="color: var(--text-muted); margin-bottom: 2rem;"></p>
+            <a th:href="@{/dashboard}" class="btn btn-primary">Go to Dashboard</a>
+            <a th:href="@{/login}" class="btn btn-outline" style="margin-left: 0.5rem;">Back to Login</a>
+        </div>
+    </div>
+</body>
+</html>

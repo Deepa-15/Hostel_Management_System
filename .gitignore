@@ -1,0 +1,71 @@
+# ═══════════════════════════════════════════════════════
+# Hostel Management System — .gitignore
+# ═══════════════════════════════════════════════════════
+
+# ── Compiled class files ──────────────────────────────
+*.class
+
+# ── Maven build output ────────────────────────────────
+target/
+
+# ── Maven wrapper jar (downloaded on demand) ──────────
+.mvn/wrapper/maven-wrapper.jar
+
+# ── Log files ─────────────────────────────────────────
+*.log
+logs/
+
+# ── Package files ─────────────────────────────────────
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# ── IDE — IntelliJ IDEA ──────────────────────────────
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# ── IDE — Eclipse ─────────────────────────────────────
+.classpath
+.project
+.settings/
+bin/
+
+# ── IDE — VS Code ─────────────────────────────────────
+.vscode/
+
+# ── IDE — NetBeans ────────────────────────────────────
+nbproject/private/
+nbbuild/
+nbdist/
+nb-configuration.xml
+
+# ── OS generated files ────────────────────────────────
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── Spring Boot ───────────────────────────────────────
+spring-shell.log
+
+# ── H2 Database files ────────────────────────────────
+*.db
+*.mv.db
+*.trace.db
+
+# ── Application properties with secrets (if any) ─────
+# application-local.properties
+# application-prod.properties
+
+# ── Temp files ────────────────────────────────────────
+*.tmp
+*.bak
+*.swp
+*~

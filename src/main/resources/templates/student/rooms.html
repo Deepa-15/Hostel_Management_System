@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Rooms — Hostel Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <div class="icon">🏠</div>
+                <div><h2>HMS</h2><small>Student Panel</small></div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/student/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+                <li><a href="/student/rooms" class="active"><span class="icon">🛏️</span> Available Rooms</a></li>
+                <li><a href="/student/allocations"><span class="icon">📋</span> My Allocations</a></li>
+                <li><a href="/student/payments"><span class="icon">💳</span> Payment History</a></li>
+                <li><a href="/student/complaints"><span class="icon">📝</span> My Complaints</a></li>
+                <li><a href="/student/complaint/new"><span class="icon">➕</span> New Complaint</a></li>
+                <li style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <a href="#" onclick="document.getElementById('logoutModal').classList.add('active'); return false;"><span class="icon">🚪</span> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content fade-in">
+            <div class="page-header">
+                <div>
+                    <h1>🛏️ Available Rooms</h1>
+                    <p class="subtitle">Browse and apply for available hostel rooms</p>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">✅ <span th:text="${successMessage}"></span></div>
+            <div th:if="${errorMessage}" class="alert alert-error">⚠️ <span th:text="${errorMessage}"></span></div>
+
+            <div th:if="${hasActiveAllocation}" class="alert alert-info">
+                ℹ️ You already have an active room allocation. Vacate your current room to apply for a new one.
+            </div>
+
+            <div class="room-grid">
+                <div class="room-card" th:each="room : ${rooms}">
+                    <div class="room-header">
+                        <span class="room-number" th:text="'Room ' + ${room.roomNumber}">Room 101</span>
+                        <span class="room-type" th:text="${room.roomType}">SINGLE</span>
+                    </div>
+                    <div class="room-details">
+                        <div>
+                            <span class="label">Hostel:</span>
+                            <div th:text="${room.hostel.name}">Hostel A</div>
+                        </div>
+                        <div>
+                            <span class="label">Floor:</span>
+                            <div th:text="${room.floorNumber}">1</div>
+                        </div>
+                        <div>
+                            <span class="label">Capacity:</span>
+                            <div th:text="${room.capacity}">2</div>
+                        </div>
+                        <div>
+                            <span class="label">Available Beds:</span>
+                            <div th:text="${room.capacity - room.currentOccupancy}">1</div>
+                        </div>
+                    </div>
+                    <div class="room-fee" th:text="'₹' + ${room.feePerSemester} + ' / semester'">₹25,000 / semester</div>
+                    <form th:action="@{/student/apply-room}" method="post">
+                        <input type="hidden" name="roomId" th:value="${room.id}">
+                        <button type="submit" class="btn btn-primary btn-sm" style="width: 100%; justify-content: center;"
+                                th:disabled="${hasActiveAllocation}"
+                                onclick="return confirm('Apply for this room?')">
+                            Apply Now
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div th:if="${rooms.isEmpty()}" class="card">
+                <div class="empty-state">
+                    <div class="icon">🏚️</div>
+                    <p>No rooms available at the moment.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Confirm Logout</h3>
+                <button class="modal-close" onclick="document.getElementById('logoutModal').classList.remove('active')">&times;</button>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Are you sure you want to log out of the Hostel Management System?</p>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="document.getElementById('logoutModal').classList.remove('active')">Cancel</button>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">🚪 Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management — Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <div class="icon">🏠</div>
+                <div><h2>HMS</h2><small>Admin Panel</small></div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/admin/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+                <li><a href="/admin/users" class="active"><span class="icon">👥</span> Users</a></li>
+                <li><a href="/admin/hostels"><span class="icon">🏢</span> Hostels</a></li>
+                <li><a href="/admin/rooms"><span class="icon">🛏️</span> Rooms</a></li>
+                <li><a href="/admin/allocations"><span class="icon">📋</span> Allocations</a></li>
+                <li><a href="/admin/payments"><span class="icon">💳</span> Payments</a></li>
+                <li><a href="/admin/complaints"><span class="icon">📝</span> Complaints</a></li>
+                <li style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <a href="#" onclick="document.getElementById('logoutModal').classList.add('active'); return false;"><span class="icon">🚪</span> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content fade-in">
+            <div class="page-header">
+                <h1>👥 User Management</h1>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">✅ <span th:text="${successMessage}"></span></div>
+            <div th:if="${errorMessage}" class="alert alert-error">⚠️ <span th:text="${errorMessage}"></span></div>
+
+            <!-- Students -->
+            <div class="section">
+                <h2 class="section-title">👨‍🎓 Students (<span th:text="${students.size()}">0</span>)</h2>
+                <div class="table-wrapper" th:if="${!students.isEmpty()}">
+                    <table>
+                        <thead><tr><th>ID</th><th>Username</th><th>Full Name</th><th>Email</th><th>Phone</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr th:each="s : ${students}">
+                                <td th:text="${s.id}">1</td>
+                                <td th:text="${s.username}">user</td>
+                                <td th:text="${s.fullName}">Name</td>
+                                <td th:text="${s.email}">email</td>
+                                <td th:text="${s.phone}">phone</td>
+                                <td>
+                                    <form th:action="@{/admin/user/delete/{id}(id=${s.id})}" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Delete this user?')">🗑️ Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Wardens -->
+            <div class="section">
+                <h2 class="section-title">👨‍💼 Wardens (<span th:text="${wardens.size()}">0</span>)</h2>
+                <div class="table-wrapper" th:if="${!wardens.isEmpty()}">
+                    <table>
+                        <thead><tr><th>ID</th><th>Username</th><th>Full Name</th><th>Email</th><th>Phone</th></tr></thead>
+                        <tbody>
+                            <tr th:each="w : ${wardens}">
+                                <td th:text="${w.id}">1</td>
+                                <td th:text="${w.username}">user</td>
+                                <td th:text="${w.fullName}">Name</td>
+                                <td th:text="${w.email}">email</td>
+                                <td th:text="${w.phone}">phone</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Confirm Logout</h3>
+                <button class="modal-close" onclick="document.getElementById('logoutModal').classList.remove('active')">&times;</button>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Are you sure you want to log out of the Hostel Management System?</p>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="document.getElementById('logoutModal').classList.remove('active')">Cancel</button>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">🚪 Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

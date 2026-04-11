@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Management — Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <div class="icon">🏠</div>
+                <div><h2>HMS</h2><small>Admin Panel</small></div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/admin/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+                <li><a href="/admin/users"><span class="icon">👥</span> Users</a></li>
+                <li><a href="/admin/hostels"><span class="icon">🏢</span> Hostels</a></li>
+                <li><a href="/admin/rooms" class="active"><span class="icon">🛏️</span> Rooms</a></li>
+                <li><a href="/admin/allocations"><span class="icon">📋</span> Allocations</a></li>
+                <li><a href="/admin/payments"><span class="icon">💳</span> Payments</a></li>
+                <li><a href="/admin/complaints"><span class="icon">📝</span> Complaints</a></li>
+                <li style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <a href="#" onclick="document.getElementById('logoutModal').classList.add('active'); return false;"><span class="icon">🚪</span> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content fade-in">
+            <div class="page-header">
+                <h1>🛏️ Room Management</h1>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">✅ <span th:text="${successMessage}"></span></div>
+            <div th:if="${errorMessage}" class="alert alert-error">⚠️ <span th:text="${errorMessage}"></span></div>
+
+            <!-- Add Room Form -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3 class="card-title">➕ Add New Room</h3>
+                </div>
+                <form th:action="@{/admin/room/add}" method="post">
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>Room Number</label>
+                            <input type="text" name="roomNumber" class="form-control" placeholder="e.g. 301" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Room Type</label>
+                            <select name="roomType" class="form-control" required>
+                                <option th:each="t : ${roomTypes}" th:value="${t}" th:text="${t}">SINGLE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Hostel</label>
+                            <select name="hostelId" class="form-control" required>
+                                <option th:each="h : ${hostels}" th:value="${h.id}" th:text="${h.name}">Hostel A</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>Capacity</label>
+                            <input type="number" name="capacity" class="form-control" placeholder="1" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fee per Semester (₹)</label>
+                            <input type="number" name="feePerSemester" class="form-control" placeholder="25000" step="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Floor Number</label>
+                            <input type="number" name="floorNumber" class="form-control" placeholder="1" min="0" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">➕ Add Room</button>
+                </form>
+            </div>
+
+            <!-- Rooms List -->
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Room No.</th><th>Hostel</th><th>Type</th>
+                            <th>Floor</th><th>Capacity</th><th>Occupied</th>
+                            <th>Fee</th><th>Available</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="r : ${rooms}">
+                            <td th:text="${r.id}">1</td>
+                            <td th:text="${r.roomNumber}">101</td>
+                            <td th:text="${r.hostel.name}">Hostel A</td>
+                            <td th:text="${r.roomType}">SINGLE</td>
+                            <td th:text="${r.floorNumber}">1</td>
+                            <td th:text="${r.capacity}">2</td>
+                            <td th:text="${r.currentOccupancy}">0</td>
+                            <td th:text="'₹' + ${r.feePerSemester}">₹25000</td>
+                            <td>
+                                <span class="badge" th:classappend="${r.available ? 'badge-confirmed' : 'badge-rejected'}"
+                                      th:text="${r.available ? 'Yes' : 'Full'}">Yes</span>
+                            </td>
+                            <td>
+                                <form th:action="@{/admin/room/delete/{id}(id=${r.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Delete this room?')">🗑️</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Confirm Logout</h3>
+                <button class="modal-close" onclick="document.getElementById('logoutModal').classList.remove('active')">&times;</button>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Are you sure you want to log out of the Hostel Management System?</p>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="document.getElementById('logoutModal').classList.remove('active')">Cancel</button>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">🚪 Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Complaint — Hostel Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <div class="icon">🏠</div>
+                <div><h2>HMS</h2><small>Student Panel</small></div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/student/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+                <li><a href="/student/rooms"><span class="icon">🛏️</span> Available Rooms</a></li>
+                <li><a href="/student/allocations"><span class="icon">📋</span> My Allocations</a></li>
+                <li><a href="/student/payments"><span class="icon">💳</span> Payment History</a></li>
+                <li><a href="/student/complaints"><span class="icon">📝</span> My Complaints</a></li>
+                <li><a href="/student/complaint/new" class="active"><span class="icon">➕</span> New Complaint</a></li>
+                <li style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <a href="#" onclick="document.getElementById('logoutModal').classList.add('active'); return false;"><span class="icon">🚪</span> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content fade-in">
+            <div class="page-header">
+                <h1>➕ Submit Complaint</h1>
+            </div>
+
+            <div class="card" style="max-width: 600px;">
+                <form th:action="@{/student/complaint}" method="post">
+                    <div class="form-group">
+                        <label for="title">Complaint Title</label>
+                        <input type="text" id="title" name="title" class="form-control"
+                               placeholder="Brief title of your complaint" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" name="category" class="form-control">
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Cleanliness">Cleanliness</option>
+                            <option value="Water Supply">Water Supply</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Security">Security</option>
+                            <option value="Food">Food</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" class="form-control"
+                                  placeholder="Describe your complaint in detail..." required></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">📨 Submit Complaint</button>
+                        <a href="/student/complaints" class="btn btn-outline">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Confirm Logout</h3>
+                <button class="modal-close" onclick="document.getElementById('logoutModal').classList.remove('active')">&times;</button>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Are you sure you want to log out of the Hostel Management System?</p>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="document.getElementById('logoutModal').classList.remove('active')">Cancel</button>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">🚪 Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooms — Warden Panel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <div class="icon">🏠</div>
+                <div><h2>HMS</h2><small>Warden Panel</small></div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/warden/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+                <li><a href="/warden/allocations"><span class="icon">📋</span> Allocations</a></li>
+                <li><a href="/warden/complaints"><span class="icon">📝</span> Complaints</a></li>
+                <li><a href="/warden/rooms" class="active"><span class="icon">🛏️</span> Rooms</a></li>
+                <li style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <a href="#" onclick="document.getElementById('logoutModal').classList.add('active'); return false;"><span class="icon">🚪</span> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content fade-in">
+            <div class="page-header">
+                <h1>🛏️ Room Overview</h1>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Room No.</th>
+                            <th>Hostel</th>
+                            <th>Type</th>
+                            <th>Floor</th>
+                            <th>Capacity</th>
+                            <th>Occupied</th>
+                            <th>Available</th>
+                            <th>Fee/Semester</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="r : ${rooms}">
+                            <td th:text="${r.roomNumber}">101</td>
+                            <td th:text="${r.hostel.name}">Hostel A</td>
+                            <td th:text="${r.roomType}">SINGLE</td>
+                            <td th:text="${r.floorNumber}">1</td>
+                            <td th:text="${r.capacity}">2</td>
+                            <td th:text="${r.currentOccupancy}">1</td>
+                            <td>
+                                <span class="badge" th:classappend="${r.available ? 'badge-confirmed' : 'badge-rejected'}"
+                                      th:text="${r.available ? 'Yes' : 'Full'}">Yes</span>
+                            </td>
+                            <td th:text="'₹' + ${r.feePerSemester}">₹25000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Confirm Logout</h3>
+                <button class="modal-close" onclick="document.getElementById('logoutModal').classList.remove('active')">&times;</button>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Are you sure you want to log out of the Hostel Management System?</p>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="document.getElementById('logoutModal').classList.remove('active')">Cancel</button>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">🚪 Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

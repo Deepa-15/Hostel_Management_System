@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaints — Warden Panel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <div class="icon">🏠</div>
+                <div><h2>HMS</h2><small>Warden Panel</small></div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/warden/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+                <li><a href="/warden/allocations"><span class="icon">📋</span> Allocations</a></li>
+                <li><a href="/warden/complaints" class="active"><span class="icon">📝</span> Complaints</a></li>
+                <li><a href="/warden/rooms"><span class="icon">🛏️</span> Rooms</a></li>
+                <li style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <a href="#" onclick="document.getElementById('logoutModal').classList.add('active'); return false;"><span class="icon">🚪</span> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content fade-in">
+            <div class="page-header">
+                <h1>📝 Complaint Management</h1>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">✅ <span th:text="${successMessage}"></span></div>
+            <div th:if="${errorMessage}" class="alert alert-error">⚠️ <span th:text="${errorMessage}"></span></div>
+
+            <div th:if="${complaints.isEmpty()}" class="card">
+                <div class="empty-state"><div class="icon">📝</div><p>No complaints found.</p></div>
+            </div>
+
+            <div class="table-wrapper" th:if="${!complaints.isEmpty()}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Filed On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="c : ${complaints}">
+                            <td th:text="${c.id}">1</td>
+                            <td th:text="${c.student.fullName}">Student</td>
+                            <td>
+                                <div th:text="${c.title}" style="font-weight: 600;">Title</div>
+                                <div th:text="${c.description}" style="font-size: 0.8rem; color: var(--text-muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Description</div>
+                            </td>
+                            <td th:text="${c.category}">General</td>
+                            <td>
+                                <span class="badge" th:classappend="'badge-' + ${c.status.name().toLowerCase()}"
+                                      th:text="${c.status}">SUBMITTED</span>
+                            </td>
+                            <td th:text="${#temporals.format(c.createdAt, 'dd MMM yyyy')}">01 Jan</td>
+                            <td>
+                                <form th:if="${c.status.name() != 'CLOSED'}"
+                                      th:action="@{/warden/complaint/update/{id}(id=${c.id})}" method="post"
+                                      style="display: flex; gap: 0.25rem; align-items: center;">
+                                    <select name="status" class="form-control" style="padding: 0.3rem; font-size: 0.8rem; width: auto;">
+                                        <option value="IN_PROGRESS" th:if="${c.status.name() == 'SUBMITTED'}">In Progress</option>
+                                        <option value="RESOLVED" th:if="${c.status.name() == 'SUBMITTED' || c.status.name() == 'IN_PROGRESS'}">Resolved</option>
+                                        <option value="CLOSED">Closed</option>
+                                    </select>
+                                    <input type="hidden" name="notes" value="Updated by warden">
+                                    <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                                </form>
+                                <span th:if="${c.status.name() == 'CLOSED'}" style="color: var(--text-muted);">Closed</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Confirm Logout</h3>
+                <button class="modal-close" onclick="document.getElementById('logoutModal').classList.remove('active')">&times;</button>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Are you sure you want to log out of the Hostel Management System?</p>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="document.getElementById('logoutModal').classList.remove('active')">Cancel</button>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">🚪 Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

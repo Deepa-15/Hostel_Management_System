@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Complaints — Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <div class="icon">🏠</div>
+                <div><h2>HMS</h2><small>Admin Panel</small></div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/admin/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+                <li><a href="/admin/users"><span class="icon">👥</span> Users</a></li>
+                <li><a href="/admin/hostels"><span class="icon">🏢</span> Hostels</a></li>
+                <li><a href="/admin/rooms"><span class="icon">🛏️</span> Rooms</a></li>
+                <li><a href="/admin/allocations"><span class="icon">📋</span> Allocations</a></li>
+                <li><a href="/admin/payments"><span class="icon">💳</span> Payments</a></li>
+                <li><a href="/admin/complaints" class="active"><span class="icon">📝</span> Complaints</a></li>
+                <li style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <a href="#" onclick="document.getElementById('logoutModal').classList.add('active'); return false;"><span class="icon">🚪</span> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content fade-in">
+            <div class="page-header">
+                <h1>📝 All Complaints</h1>
+            </div>
+
+            <div th:if="${complaints.isEmpty()}" class="card">
+                <div class="empty-state"><div class="icon">📝</div><p>No complaints found.</p></div>
+            </div>
+
+            <div class="table-wrapper" th:if="${!complaints.isEmpty()}">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>Student</th><th>Title</th><th>Category</th><th>Status</th><th>Filed On</th><th>Resolved By</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="c : ${complaints}">
+                            <td th:text="${c.id}">1</td>
+                            <td th:text="${c.student.fullName}">Student</td>
+                            <td th:text="${c.title}">Title</td>
+                            <td th:text="${c.category}">General</td>
+                            <td>
+                                <span class="badge" th:classappend="'badge-' + ${c.status.name().toLowerCase()}"
+                                      th:text="${c.status}">SUBMITTED</span>
+                            </td>
+                            <td th:text="${#temporals.format(c.createdAt, 'dd MMM yyyy')}">01 Jan</td>
+                            <td th:text="${c.resolvedBy != null ? c.resolvedBy.fullName : '—'}">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Confirm Logout</h3>
+                <button class="modal-close" onclick="document.getElementById('logoutModal').classList.remove('active')">&times;</button>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Are you sure you want to log out of the Hostel Management System?</p>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="document.getElementById('logoutModal').classList.remove('active')">Cancel</button>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">🚪 Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
